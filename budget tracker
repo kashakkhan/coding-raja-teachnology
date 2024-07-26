@@ -1,0 +1,78 @@
+import json
+import os
+
+# File to store data
+DATA_FILE = 'budget_data.json'
+
+# Load data from file
+def load_data():
+    if os.path.exists(DATA_FILE):
+        with open(DATA_FILE, 'r') as f:
+            return json.load(f)
+    return {'income': [], 'expenses': []}
+load_data()
+# Save data to file
+def save_data(data):
+    with open(DATA_FILE, 'w') as f:
+        json.dump(data, f)
+
+# Add income entry
+def add_income(data):
+    amount = float(input("Enter income amount: "))
+    category = input("Enter income category: ")
+    data['income'].append({'amount': amount, 'category': category})
+    save_data(data)
+    print("Income added successfully.\n")
+
+# Add expense entry
+def add_expense(data):
+    amount = float(input("Enter expense amount: "))
+    category = input("Enter expense category: ")
+    data['expenses'].append({'amount': amount, 'category': category})
+    save_data(data)
+    print("Expense added successfully.\n")
+
+# Calculate budget
+def calculate_budget(data):
+    total_income = sum(item['amount'] for item in data['income'])
+    total_expenses = sum(item['amount'] for item in data['expenses'])
+    remaining_budget = total_income - total_expenses
+    print(f"Total Income: ${total_income:.2f}")
+    print(f"Total Expenses: ${total_expenses:.2f}")
+    print(f"Remaining Budget: ${remaining_budget:.2f}\n")
+
+# Analyze expenses
+def analyze_expenses(data):
+    categories = {}
+    for expense in data['expenses']:
+        categories[expense['category']] = categories.get(expense['category'], 0) + expense['amount']
+    print("Expense Analysis by Category:")
+    for category, total in categories.items():
+        print(f"{category}: ${total:.2f}")
+    print()
+
+def main():
+    data = load_data()
+    while True:
+        print("Budget Tracker Menu")
+        print("1. Add Income")
+        print("2. Add Expense")
+        print("3. Calculate Budget")
+        print("4. Analyze Expenses")
+        print("5. Exit")
+        choice = input("Choose an option: ")
+
+        if choice == '1':
+            add_income(data)
+        elif choice == '2':
+            add_expense(data)
+        elif choice == '3':
+            calculate_budget(data)
+        elif choice == '4':
+            analyze_expenses(data)
+        elif choice == '5':
+            break
+        else:
+            print("Invalid choice, please try again.\n")
+
+main()
